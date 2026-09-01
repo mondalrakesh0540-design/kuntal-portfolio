@@ -765,3 +765,8 @@ input[type='range']::-webkit-slider-thumb {
   border: 2px solid var(--accent-cyan);
   box-shadow: 0 0 15px var(--accent-cyan-dim);
 }
+
+/* Mobile Touch Action Optimization for Canvas */
+.sim-canvas-wrap canvas, #three-cad-canvas-container canvas {
+  touch-action: none;
+}
