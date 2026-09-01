@@ -489,3 +489,256 @@ input[type='range']::-webkit-slider-thumb {
   border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1.5rem; display: flex; justify-content: space-between;
   align-items: center; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim);
 }
+
+/* ==========================================================================
+   DYNAMIC 4-THEME DESIGN ENGINE & COMMERCIAL ADDITIONS
+   ========================================================================== */
+
+/* Theme 1 (Default): Cyan Blueprint */
+:root, [data-theme='cyan'] {
+  --accent-cyan: #00f0ff;
+  --accent-cyan-glow: rgba(0, 240, 255, 0.4);
+  --accent-cyan-dim: rgba(0, 240, 255, 0.12);
+  --accent-amber: #ff9d00;
+  --accent-amber-glow: rgba(255, 157, 0, 0.4);
+  --accent-amber-dim: rgba(255, 157, 0, 0.12);
+  --border-bright: rgba(0, 240, 255, 0.45);
+  --shadow-cyan: 0 0 25px rgba(0, 240, 255, 0.22);
+}
+
+/* Theme 2: Industrial Amber */
+[data-theme='amber'] {
+  --accent-cyan: #ff9d00;
+  --accent-cyan-glow: rgba(255, 157, 0, 0.45);
+  --accent-cyan-dim: rgba(255, 157, 0, 0.14);
+  --accent-amber: #00f0ff;
+  --accent-amber-glow: rgba(0, 240, 255, 0.4);
+  --accent-amber-dim: rgba(0, 240, 255, 0.12);
+  --border-bright: rgba(255, 157, 0, 0.45);
+  --shadow-cyan: 0 0 25px rgba(255, 157, 0, 0.22);
+}
+
+/* Theme 3: Matrix CNC Green */
+[data-theme='green'] {
+  --accent-cyan: #00ff88;
+  --accent-cyan-glow: rgba(0, 255, 136, 0.45);
+  --accent-cyan-dim: rgba(0, 255, 136, 0.14);
+  --accent-amber: #ffdd00;
+  --accent-amber-glow: rgba(255, 221, 0, 0.4);
+  --accent-amber-dim: rgba(255, 221, 0, 0.12);
+  --border-bright: rgba(0, 255, 136, 0.45);
+  --shadow-cyan: 0 0 25px rgba(0, 255, 136, 0.22);
+}
+
+/* Theme 4: Molten Thermal Red */
+[data-theme='red'] {
+  --accent-cyan: #ff3b30;
+  --accent-cyan-glow: rgba(255, 59, 48, 0.45);
+  --accent-cyan-dim: rgba(255, 59, 48, 0.14);
+  --accent-amber: #ff9d00;
+  --accent-amber-glow: rgba(255, 157, 0, 0.4);
+  --accent-amber-dim: rgba(255, 157, 0, 0.12);
+  --border-bright: rgba(255, 59, 48, 0.45);
+  --shadow-cyan: 0 0 25px rgba(255, 59, 48, 0.22);
+}
+
+/* FLOATING HUD CONTROLS (Theme & Audio) */
+.hud-floating-bar {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1500;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-bright);
+  backdrop-filter: blur(16px);
+  padding: 0.5rem 0.8rem;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+}
+
+.theme-palette {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.theme-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+.theme-btn:hover, .theme-btn.active {
+  transform: scale(1.25);
+  border-color: #fff;
+}
+.theme-btn.cyan-btn { background: #00f0ff; box-shadow: 0 0 8px #00f0ff; }
+.theme-btn.amber-btn { background: #ff9d00; box-shadow: 0 0 8px #ff9d00; }
+.theme-btn.green-btn { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+.theme-btn.red-btn { background: #ff3b30; box-shadow: 0 0 8px #ff3b30; }
+
+.hud-audio-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s;
+}
+.hud-audio-btn:hover {
+  color: var(--accent-cyan);
+}
+
+/* PRECISION CAD CROSSHAIR CURSOR */
+#cad-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-100px, -100px);
+  transition: width 0.15s, height 0.15s;
+}
+
+.cursor-cross {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  transform: translate(-12px, -12px);
+}
+
+.cursor-cross::before,
+.cursor-cross::after {
+  content: '';
+  position: absolute;
+  background: var(--accent-cyan);
+  opacity: 0.7;
+}
+
+.cursor-cross::before {
+  top: 11px;
+  left: 0;
+  width: 24px;
+  height: 1px;
+}
+
+.cursor-cross::after {
+  top: 0;
+  left: 11px;
+  width: 1px;
+  height: 24px;
+}
+
+#cursor-coords {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--accent-cyan);
+  background: rgba(7, 11, 20, 0.85);
+  padding: 1px 4px;
+  border-radius: 2px;
+  border: 1px solid var(--border-bright);
+  white-space: nowrap;
+}
+
+#cad-cursor.active .cursor-cross {
+  transform: translate(-12px, -12px) scale(1.4);
+}
+#cad-cursor.active .cursor-cross::before,
+#cad-cursor.active .cursor-cross::after {
+  background: var(--accent-amber);
+}
+
+/* COMMERCIAL COST ESTIMATOR */
+.estimator-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.estimator-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.estimator-summary-box {
+  background: #060b17;
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.estimator-cost-val {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--accent-cyan);
+  margin: 0.6rem 0;
+}
+
+/* CLI TERMINAL ASSISTANT */
+.terminal-cli-wrap {
+  background: #040812;
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  box-shadow: var(--shadow-card);
+}
+
+.cli-output {
+  height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.cli-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-top: 1px solid var(--border-dim);
+  padding-top: 0.8rem;
+}
+
+.cli-input {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+/* 3D TILT CARDS */
+.tilt-card {
+  transition: transform 0.1s ease-out;
+  transform-style: preserve-3d;
+}
