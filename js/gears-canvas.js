@@ -42,7 +42,7 @@ class GearTrainSimulator {
   bindEvents() {
     window.addEventListener('resize', () => this.resize());
 
-    // Mouse drag interaction
+    // Mouse & Touch drag interaction (Mobile Optimized)
     this.canvas.addEventListener('mousedown', (e) => {
       this.isDragging = true;
       this.lastMouseX = e.clientX;
@@ -57,6 +57,24 @@ class GearTrainSimulator {
         this.lastMouseX = e.clientX;
       }
     });
+
+    // Touch events for mobile phones and tablets
+    this.canvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        this.isDragging = true;
+        this.lastMouseX = e.touches[0].clientX;
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => { this.isDragging = false; });
+
+    this.canvas.addEventListener('touchmove', (e) => {
+      if (this.isDragging && e.touches.length > 0) {
+        const deltaX = e.touches[0].clientX - this.lastMouseX;
+        this.angle += deltaX * 0.02;
+        this.lastMouseX = e.touches[0].clientX;
+      }
+    }, { passive: true });
 
     // Lab Controls
     const rpmSlider = document.getElementById('gear-rpm-slider');
