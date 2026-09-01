@@ -21,11 +21,7 @@
 </head>
 <body>
 
-  <!-- CAD PRECISION CROSSHAIR CURSOR -->
-  <div id="cad-cursor">
-    <div class="cursor-cross"></div>
-    <div id="cursor-coords">X:0 Y:0</div>
-  </div>
+  
 
   <!-- FLOATING HUD THEME & AUDIO CONTROLS -->
   <div class="hud-floating-bar">
@@ -64,7 +60,7 @@
         <li><a href="#academics" class="nav-link">Academics</a></li>
         <li><a href="#internship" class="nav-link">RAC Internship</a></li>
         <li><a href="#projects" class="nav-link">CAD Gallery</a></li>
-        <li><a href="#estimator" class="nav-link">Cost Estimator</a></li>
+        
         <li><a href="#contact" class="nav-link">Contact</a></li>
       </ul>
 
@@ -104,8 +100,8 @@
           <a href="#lab" class="btn btn-primary">
             <i class="fa-solid fa-microchip"></i> Launch CAD & CNC Studio
           </a>
-          <a href="#estimator" class="btn btn-amber">
-            <i class="fa-solid fa-calculator"></i> Project Cost Estimator
+          <a href="#projects" class="btn btn-secondary">
+            <i class="fa-solid fa-layer-group"></i> View CAD Portfolio
           </a>
           <a href="#resume-modal" class="btn btn-secondary open-resume-btn">
             <i class="fa-solid fa-file-lines"></i> View Resume
@@ -937,56 +933,7 @@
     </div>
   </section>
 
-  <!-- COMMERCIAL FEATURE: ENGINEERING PROJECT COST ESTIMATOR -->
-  <section id="estimator" class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag amber-tag"><i class="fa-solid fa-calculator"></i> COMMERCIAL ESTIMATOR</span>
-        <h2 class="section-title">Engineering Project Cost Calculator</h2>
-        <p class="section-subtitle">Calculate instant project estimates for CAD modeling, CNC programming, and thermal engineering design.</p>
-      </div>
-
-      <div class="estimator-card tilt-card">
-        <div class="estimator-inputs">
-          <div class="form-group">
-            <label class="form-label">SERVICE CATEGORY</label>
-            <select id="calc-service-type" class="form-input">
-              <option value="solidworks_3d">3D Parametric CAD Modeling & Assembly ($45/hr)</option>
-              <option value="cad_2d">2D Technical Drafting & GD&T ($25/hr)</option>
-              <option value="cnc_cam">CNC Toolpathing & G-Code Automation ($55/hr)</option>
-              <option value="rac_hvac">RAC / HVAC Thermal System Design ($50/hr)</option>
-              <option value="full_assembly">Turnkey Mechanical Product Engineering ($65/hr)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">GEOMETRIC COMPLEXITY</label>
-            <select id="calc-complexity" class="form-input">
-              <option value="simple">Standard Geometry (Prismatic / Simple Turns)</option>
-              <option value="moderate" selected>Moderate (Multi-feature / Gears / Housings)</option>
-              <option value="advanced">Complex (Curved Surfaces / Turbines / Mates)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">ESTIMATED NUMBER OF UNIQUE COMPONENTS</label>
-            <input type="number" id="calc-parts-count" class="form-input" min="1" max="50" value="3">
-          </div>
-        </div>
-
-        <div class="estimator-summary-box">
-          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-cyan);">ESTIMATED PROJECT QUOTE</span>
-          <div id="calc-total-cost" class="estimator-cost-val">$756 USD</div>
-          <div id="calc-total-hours" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-amber); margin-bottom: 1.2rem;">
-            17 Estimated Engineering Hours
-          </div>
-          <a href="#contact" class="btn btn-primary btn-sm" style="width: 100%;">
-            <i class="fa-solid fa-file-contract"></i> Request Official Quotation
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+  
 
   <!-- COMMERCIAL FEATURE: INTERACTIVE CLI TERMINAL ASSISTANT -->
   <section class="section" style="padding-top: 1rem;">
@@ -1240,7 +1187,7 @@
             <li><a href="#skills">Technical Matrix</a></li>
             <li><a href="#academics">Education Roadmap</a></li>
             <li><a href="#internship">RAC Internship</a></li>
-            <li><a href="#estimator">Cost Estimator</a></li>
+            
             <li><a href="#projects">CAD Gallery</a></li>
           </ul>
         </div>
