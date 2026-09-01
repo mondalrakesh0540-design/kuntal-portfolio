@@ -1,0 +1,41 @@
+/* Mechanical Keyframe Animations */
+@keyframes rotateGear {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotateGearReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
+
+@keyframes radarSweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes blueprintScan {
+  0% { top: -10%; opacity: 0; }
+  50% { opacity: 0.6; }
+  100% { top: 110%; opacity: 0; }
+}
+
+@keyframes laserPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes sparkFlash {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+.gear-spin { animation: rotateGear 10s linear infinite; }
+.gear-spin-rev { animation: rotateGearReverse 10s linear infinite; }
+.radar-sweep { animation: radarSweep 4s linear infinite; }
