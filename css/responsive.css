@@ -1,0 +1,36 @@
+/* Responsive Media Queries */
+@media (max-width: 1024px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .hero-visual { max-width: 600px; margin: 0 auto; width: 100%; }
+  .about-grid { grid-template-columns: 1fr; }
+  .lab-panel { grid-template-columns: 1fr; }
+  .sim-controls-sidebar { border-left: none; border-top: 1px solid var(--border-dim); }
+  .internship-card { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    position: fixed; top: 74px; left: 0; width: 100%;
+    background: var(--bg-secondary); border-bottom: 1px solid var(--border-bright);
+    flex-direction: column; padding: 1.5rem 0; gap: 1rem; display: none;
+  }
+  .nav-links.active { display: flex; }
+  .nav-toggle-btn { display: block; }
+  .hero-title { font-size: 2.5rem; }
+  .timeline::before { left: 20px; }
+  .timeline-item { width: 100%; padding-left: 50px; padding-right: 0; text-align: left; }
+  .timeline-item.right { left: 0; }
+  .timeline-item.left .timeline-node, .timeline-item.right .timeline-node { left: 10px; right: auto; }
+  .timeline-item.left .gpa-pills { justify-content: flex-start; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .resume-sheet-grid { grid-template-columns: 1fr; }
+  .resume-section-banner { flex-direction: column; gap: 1.5rem; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .hero-quick-specs { grid-template-columns: 1fr; }
+  .strengths-grid { grid-template-columns: 1fr; }
+  .section-title { font-size: 2rem; }
+  .rac-key-points { grid-template-columns: 1fr; }
+}
