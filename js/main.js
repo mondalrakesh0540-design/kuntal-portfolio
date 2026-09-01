@@ -1,15 +1,13 @@
 /**
  * COMMERCIAL-GRADE INTERFACE CONTROLLER & CLIENT TOOLS
- * Features: 4-Theme Switcher, CAD Cursor, Cost Estimator, CLI Terminal Assistant, 3D Tilt Cards
+ * Features: 4-Theme Switcher, CLI Terminal Assistant, 3D Tilt Cards, VCR Schematic
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   initThemeSwitcher();
-  initCADCrosshairCursor();
   initNav();
   initLabTabs();
   initRACCycleCanvas();
-  initProjectCostEstimator();
   initTerminalCLI();
   init3DTiltCards();
   initProjectFilters();
@@ -35,32 +33,7 @@ function initThemeSwitcher() {
   });
 }
 
-/* 2. PRECISION CAD CROSSHAIR CURSOR */
-function initCADCrosshairCursor() {
-  const cursor = document.getElementById('cad-cursor');
-  const coordLabel = document.getElementById('cursor-coords');
-  if (!cursor) return;
-
-  window.addEventListener('mousemove', (e) => {
-    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-    if (coordLabel) {
-      coordLabel.textContent = `X:${e.clientX} Y:${e.clientY}`;
-    }
-  });
-
-  // Expand crosshair on interactive hover
-  const interactables = document.querySelectorAll('a, button, input, select, .project-card, .skill-card');
-  interactables.forEach((el) => {
-    el.addEventListener('mouseenter', () => {
-      cursor.classList.add('active');
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.classList.remove('active');
-    });
-  });
-}
-
-/* 3. NAVIGATION & SCROLLSPY */
+/* 2. NAVIGATION & SCROLLSPY */
 function initNav() {
   const toggleBtn = document.querySelector('.nav-toggle-btn');
   const navLinks = document.querySelector('.nav-links');
@@ -97,7 +70,7 @@ function initNav() {
   });
 }
 
-/* 4. MECHANICAL LAB TABS */
+/* 3. MECHANICAL LAB TABS */
 function initLabTabs() {
   const tabBtns = document.querySelectorAll('.lab-tab-btn');
   const panels = document.querySelectorAll('.lab-panel');
@@ -118,7 +91,7 @@ function initLabTabs() {
   });
 }
 
-/* 5. VAPOR COMPRESSION REFRIGERATION (VCR) CANVAS */
+/* 4. VAPOR COMPRESSION REFRIGERATION (VCR) CANVAS */
 function initRACCycleCanvas() {
   const canvas = document.getElementById('rac-cycle-canvas');
   if (!canvas) return;
@@ -131,8 +104,6 @@ function initRACCycleCanvas() {
   }
   resize();
   window.addEventListener('resize', resize);
-
-  let particleOffset = 0;
 
   function drawRAC() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -185,57 +156,14 @@ function initRACCycleCanvas() {
   drawRAC();
 }
 
-/* 6. ENGINEERING PROJECT COST ESTIMATOR & QUOTE GENERATOR */
-function initProjectCostEstimator() {
-  const serviceType = document.getElementById('calc-service-type');
-  const complexity = document.getElementById('calc-complexity');
-  const partsCount = document.getElementById('calc-parts-count');
-  const totalCostEl = document.getElementById('calc-total-cost');
-  const totalHoursEl = document.getElementById('calc-total-hours');
-
-  function calculate() {
-    if (!serviceType || !complexity || !partsCount) return;
-    const baseRates = {
-      cad_2d: 25,       // $25/hr
-      solidworks_3d: 45,// $45/hr
-      cnc_cam: 55,      // $55/hr
-      rac_hvac: 50,     // $50/hr
-      full_assembly: 65 // $65/hr
-    };
-
-    const compMultipliers = {
-      simple: 1.0,
-      moderate: 1.6,
-      advanced: 2.5
-    };
-
-    const rate = baseRates[serviceType.value] || 40;
-    const comp = compMultipliers[complexity.value] || 1.0;
-    const parts = parseInt(partsCount.value) || 1;
-
-    const hours = Math.round(parts * 3.5 * comp);
-    const totalCost = hours * rate;
-
-    if (totalCostEl) totalCostEl.textContent = `$${totalCost.toLocaleString()} USD`;
-    if (totalHoursEl) totalHoursEl.textContent = `${hours} Estimated Engineering Hours`;
-  }
-
-  if (serviceType && complexity && partsCount) {
-    serviceType.addEventListener('change', () => { if (window.mechAudio) window.mechAudio.playMechanicalClick(1200); calculate(); });
-    complexity.addEventListener('change', () => { if (window.mechAudio) window.mechAudio.playMechanicalClick(1400); calculate(); });
-    partsCount.addEventListener('input', () => calculate());
-    calculate();
-  }
-}
-
-/* 7. INTERACTIVE CLI TERMINAL ASSISTANT */
+/* 5. INTERACTIVE CLI TERMINAL ASSISTANT */
 function initTerminalCLI() {
   const cliInput = document.getElementById('cli-terminal-input');
   const cliOutput = document.getElementById('cli-terminal-output');
   if (!cliInput || !cliOutput) return;
 
   const commands = {
-    help: 'Available commands: skills, cad, cnc, rac, projects, quote, contact, clear, theme, about',
+    help: 'Available commands: skills, cad, cnc, rac, projects, contact, clear, theme, about',
     about: 'Kuntal Ghosh | Diploma in Mechanical Engineering | Bankura Government Polytechnic | WBSCT&VE&SD',
     skills: 'CAD: AutoCAD 2D/3D, SolidWorks | CNC: G-Code, M-Code, Lathe/Mill Simulation | Thermal & RAC | Metrology | AI Engineering Tools',
     cad: 'SolidWorks 3D Parametric Modeling, AutoCAD Drafting, Involute Gear Design, GD&T ISO Tolerancing',
@@ -243,7 +171,6 @@ function initTerminalCLI() {
     rac: 'Vapor Compression Refrigeration (VCR) cycle, Compressor overhaul, Psychrometrics, Enthalpy state calculations',
     projects: '1. High-Precision Spur Gearbox | 2. 4-Stroke Engine Kinematics | 3. CNC Milling Fixture | 4. Industrial RAC Chiller | 5. Double Wishbone Suspension',
     contact: 'Phone: +91 8170841588 | Email: kuntalghosh949@gmail.com | Location: Midnapore, West Bengal',
-    quote: 'Scroll to the Engineering Cost Estimator section below to calculate project quotation!',
     clear: 'CLEAR'
   };
 
@@ -279,7 +206,7 @@ function initTerminalCLI() {
   });
 }
 
-/* 8. 3D TILT CARDS */
+/* 6. 3D TILT CARDS */
 function init3DTiltCards() {
   const cards = document.querySelectorAll('.tilt-card');
   cards.forEach((card) => {
@@ -295,7 +222,7 @@ function init3DTiltCards() {
   });
 }
 
-/* 9. PROJECT FILTERING */
+/* 7. PROJECT FILTERING */
 function initProjectFilters() {
   const filterBtns = document.querySelectorAll('.filter-btn');
   const projectCards = document.querySelectorAll('.project-card');
@@ -319,7 +246,7 @@ function initProjectFilters() {
   });
 }
 
-/* 10. RESUME MODAL */
+/* 8. RESUME MODAL */
 function initResumeModal() {
   const openBtns = document.querySelectorAll('.open-resume-btn');
   const modal = document.getElementById('resume-modal');
@@ -356,7 +283,7 @@ function initResumeModal() {
   }
 }
 
-/* 11. CONTACT FORM */
+/* 9. CONTACT FORM */
 function initContactForm() {
   const form = document.getElementById('contact-form');
   const statusEl = document.getElementById('form-status-msg');
@@ -383,7 +310,7 @@ function initContactForm() {
   }
 }
 
-/* 12. TELEMETRY TICKER */
+/* 10. TELEMETRY TICKER */
 function initTelemetryTicker() {
   const coordEl = document.getElementById('hud-live-coords');
   const clockEl = document.getElementById('hud-live-time');
