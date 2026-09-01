@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="cyan">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kuntal Ghosh | Mechanical Engineering Portfolio & CAD Lab</title>
-  <meta name="description" content="Portfolio of Kuntal Ghosh - Diploma in Mechanical Engineering, CAD/CAM Designer, CNC Programmer, and Industrial RAC Intern.">
+  <title>Kuntal Ghosh | Mechanical Engineering Portfolio & CAD Studio</title>
+  <meta name="description" content="Commercial-grade Mechanical Engineering Portfolio of Kuntal Ghosh - 3D CAD/CAM Design, CNC Machining, Thermal Systems, and Simulators.">
 
   <!-- Google Fonts: Orbitron, Space Grotesk, Inter, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +21,26 @@
 </head>
 <body>
 
+  <!-- CAD PRECISION CROSSHAIR CURSOR -->
+  <div id="cad-cursor">
+    <div class="cursor-cross"></div>
+    <div id="cursor-coords">X:0 Y:0</div>
+  </div>
+
+  <!-- FLOATING HUD THEME & AUDIO CONTROLS -->
+  <div class="hud-floating-bar">
+    <div class="theme-palette">
+      <button class="theme-btn cyan-btn active" data-theme="cyan" title="Cyan Blueprint"></button>
+      <button class="theme-btn amber-btn" data-theme="amber" title="Industrial Amber"></button>
+      <button class="theme-btn green-btn" data-theme="green" title="CNC Matrix Green"></button>
+      <button class="theme-btn red-btn" data-theme="red" title="Molten Thermal Red"></button>
+    </div>
+    <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.2);"></div>
+    <button id="hud-audio-btn" class="hud-audio-btn" onclick="window.mechAudio.toggleMute()">
+      <i class="fa-solid fa-volume-xmark"></i> <span>AUDIO: MUTED</span>
+    </button>
+  </div>
+
   <div class="blueprint-overlay"></div>
 
   <!-- NAVIGATION BAR -->
@@ -33,17 +53,18 @@
         </svg>
         <div class="brand-text">
           <span class="brand-name">KUNTAL GHOSH</span>
-          <span class="brand-sub">MECHANICAL ENGINEER</span>
+          <span class="brand-sub">MECHANICAL CAD STUDIO</span>
         </div>
       </a>
 
       <ul class="nav-links">
         <li><a href="#about" class="nav-link">About</a></li>
-        <li><a href="#lab" class="nav-link">Simulation Lab</a></li>
-        <li><a href="#skills" class="nav-link">Technical Skills</a></li>
+        <li><a href="#lab" class="nav-link">Simulation Studio</a></li>
+        <li><a href="#skills" class="nav-link">Technical Matrix</a></li>
         <li><a href="#academics" class="nav-link">Academics</a></li>
         <li><a href="#internship" class="nav-link">RAC Internship</a></li>
         <li><a href="#projects" class="nav-link">CAD Gallery</a></li>
+        <li><a href="#estimator" class="nav-link">Cost Estimator</a></li>
         <li><a href="#contact" class="nav-link">Contact</a></li>
       </ul>
 
@@ -64,29 +85,29 @@
       <div class="hero-content">
         <div class="hero-status-pill">
           <span class="status-dot"></span>
-          <span>SYSTEM STATUS: ALL CAD/CNC SYSTEMS READY</span>
+          <span>COMMERCIAL CAD/CNC STUDIO // FULLY OPERATIONAL</span>
         </div>
 
         <h1 class="hero-title">
-          Engineering Precision Through <span class="highlight-text">Mechanical Design</span> & Simulation
+          Engineering Precision Through <span class="highlight-text">Mechanical Design</span> & CAD Simulation
         </h1>
 
         <p class="hero-subtitle">
-          Kuntal Ghosh &bull; Diploma in Mechanical Engineering
+          Kuntal Ghosh &bull; Diploma in Mechanical Engineering &bull; Bankura Govt. Polytechnic
         </p>
 
         <p class="hero-description">
-          Passionate mechanical engineering student at Bankura Government Polytechnic specializing in AutoCAD (2D/3D), SolidWorks CAD/CAM, CNC Programming & Simulation, and Industrial Refrigeration & Air Conditioning (RAC).
+          Industrial-grade mechanical engineering designer specializing in AutoCAD (2D/3D), SolidWorks CAD/CAM, CNC Programming & Simulation, and Industrial Refrigeration & Air Conditioning (RAC).
         </p>
 
         <div class="hero-cta-group">
           <a href="#lab" class="btn btn-primary">
-            <i class="fa-solid fa-microchip"></i> Launch CAD & CNC Lab
+            <i class="fa-solid fa-microchip"></i> Launch CAD & CNC Studio
           </a>
-          <a href="#projects" class="btn btn-secondary">
-            <i class="fa-solid fa-layer-group"></i> View CAD Portfolio
+          <a href="#estimator" class="btn btn-amber">
+            <i class="fa-solid fa-calculator"></i> Project Cost Estimator
           </a>
-          <a href="#resume-modal" class="btn btn-outline-amber open-resume-btn">
+          <a href="#resume-modal" class="btn btn-secondary open-resume-btn">
             <i class="fa-solid fa-file-lines"></i> View Resume
           </a>
         </div>
@@ -97,19 +118,19 @@
             <span class="spec-label">Sem 4 (72.5%)</span>
           </div>
           <div class="quick-spec-item">
-            <span class="spec-number">2D / 3D</span>
-            <span class="spec-label">AutoCAD & SolidWorks</span>
+            <span class="spec-number">3D CAD / CAM</span>
+            <span class="spec-label">SolidWorks & AutoCAD</span>
           </div>
           <div class="quick-spec-item">
-            <span class="spec-number">RAC & CNC</span>
-            <span class="spec-label">Industrial Certified</span>
+            <span class="spec-number">RAC Certified</span>
+            <span class="spec-label">Dreamz Vision Finishing</span>
           </div>
         </div>
       </div>
 
       <!-- HERO MECHANICAL HUD FRAME -->
       <div class="hero-visual">
-        <div class="hero-hud-frame">
+        <div class="hero-hud-frame tilt-card">
           <div class="corner-bracket corner-tl"></div>
           <div class="corner-bracket corner-tr"></div>
           <div class="corner-bracket corner-bl"></div>
@@ -130,7 +151,7 @@
 
           <div class="hud-bottom-controls">
             <span id="hud-live-coords">LAT: 22.2500° N | LON: 87.3200° E</span>
-            <span class="text-cyan">PITCH VELOCITY: 45 RPM</span>
+            <span class="text-cyan">PITCH SPEED: 45 RPM</span>
           </div>
         </div>
       </div>
@@ -147,7 +168,7 @@
       </div>
 
       <div class="about-grid">
-        <div class="about-card">
+        <div class="about-card tilt-card">
           <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Professional Summary</h3>
           <p class="text-muted">
             Currently pursuing a Diploma in Mechanical Engineering (2023 - 2026) at <strong>Bankura Government Polytechnic</strong> under WBSCT&VE&SD.
@@ -187,7 +208,7 @@
         </div>
 
         <!-- DATASHEET SPECIFICATIONS CARD -->
-        <div class="datasheet-card">
+        <div class="datasheet-card tilt-card">
           <div class="datasheet-header">
             <span class="datasheet-title"><i class="fa-solid fa-clipboard-list"></i> SPECIFICATION DATASHEET</span>
             <span class="datasheet-doc-id">DOC-ID: KG-ME-2026</span>
@@ -240,24 +261,24 @@
     </div>
   </section>
 
-  <!-- INTERACTIVE MECHANICAL SIMULATION LAB -->
+  <!-- INTERACTIVE MECHANICAL SIMULATION STUDIO -->
   <section id="lab" class="section lab-section">
     <div class="container">
       <div class="section-header">
-        <span class="section-tag amber-tag"><i class="fa-solid fa-flask"></i> INTERACTIVE LAB</span>
-        <h2 class="section-title">Mechanical Engineering Simulation Suite</h2>
-        <p class="section-subtitle">Real-time kinematic mechanics, 3D CAD component exploration, gear transmission physics, and CNC G-Code machining simulators.</p>
+        <span class="section-tag amber-tag"><i class="fa-solid fa-flask"></i> INTERACTIVE STUDIO</span>
+        <h2 class="section-title">Commercial Mechanical Engineering Simulators</h2>
+        <p class="section-subtitle">Real-time kinematic mechanics, 3D CAD component studio, gear transmission physics, and CNC G-Code machining simulators.</p>
       </div>
 
       <div class="lab-tabs">
         <button class="lab-tab-btn active" data-tab="tab-cad3d">
-          <i class="fa-solid fa-cube"></i> 1. 3D CAD Component Explorer
+          <i class="fa-solid fa-cube"></i> 1. 3D CAD Component Studio
         </button>
         <button class="lab-tab-btn" data-tab="tab-gears">
           <i class="fa-solid fa-gear"></i> 2. Precision Gear Transmission
         </button>
         <button class="lab-tab-btn" data-tab="tab-piston">
-          <i class="fa-solid fa-arrows-up-down"></i> 3. 4-Stroke IC Engine Kinematics
+          <i class="fa-solid fa-chart-line"></i> 3. 4-Stroke Engine & PV-Diagram
         </button>
         <button class="lab-tab-btn" data-tab="tab-cnc">
           <i class="fa-solid fa-code"></i> 4. CNC G-Code Machining
@@ -266,20 +287,20 @@
 
       <div class="lab-display-container">
         
-        <!-- TAB 1: 3D CAD COMPONENT EXPLORER (THREE.JS) -->
+        <!-- TAB 1: 3D CAD COMPONENT STUDIO (THREE.JS) -->
         <div id="tab-cad3d" class="lab-panel active">
           <div class="sim-canvas-wrap" id="three-cad-canvas-container">
-            <!-- Three.js Canvas injected here -->
+            <!-- Three.js WebGL Viewport -->
           </div>
           <div class="sim-controls-sidebar">
             <h3 class="sim-control-title">3D CAD CONTROLS</h3>
             
             <div class="sim-control-group">
-              <label class="form-label">SELECT MECHANICAL PART</label>
+              <label class="form-label">SELECT MECHANICAL ASSEMBLY</label>
               <select id="cad-model-select" class="form-input">
-                <option value="gear">Flanged Spur Gear & Hub</option>
-                <option value="piston">Connecting Rod & Piston</option>
-                <option value="shaft">Stepped Transmission Shaft</option>
+                <option value="planetary">Epicyclic Planetary Gearbox Assembly</option>
+                <option value="engine">4-Valve Cylinder Head & Piston</option>
+                <option value="turbine">High-Speed Turbine Impeller & Rotor</option>
               </select>
             </div>
 
@@ -293,10 +314,12 @@
             </div>
 
             <div class="sim-control-group">
-              <label class="form-label">MATERIAL PRESET</label>
+              <label class="form-label">PBR MATERIAL PRESET</label>
               <select id="cad-material-preset" class="form-input">
                 <option value="steel">Machined Tool Steel</option>
                 <option value="titanium">Anodized Titanium</option>
+                <option value="carbon">Carbon Fiber Composite</option>
+                <option value="gold">24K Gold Plated</option>
                 <option value="brass">Industrial Brass</option>
                 <option value="cyan">Cyber CAD Cyan</option>
               </select>
@@ -369,7 +392,7 @@
           </div>
         </div>
 
-        <!-- TAB 3: 4-STROKE PISTON KINEMATICS -->
+        <!-- TAB 3: 4-STROKE ENGINE & REAL-TIME PV-DIAGRAM -->
         <div id="tab-piston" class="lab-panel">
           <div class="sim-canvas-wrap">
             <canvas id="piston-lab-canvas"></canvas>
@@ -408,13 +431,21 @@
           </div>
         </div>
 
-        <!-- TAB 4: CNC G-CODE MACHINING -->
+        <!-- TAB 4: CNC G-CODE MACHINING WITH PRESET SELECTOR -->
         <div id="tab-cnc" class="lab-panel">
           <div class="sim-canvas-wrap">
             <canvas id="cnc-lab-canvas"></canvas>
           </div>
           <div class="sim-controls-sidebar">
             <h3 class="sim-control-title">CNC CONTROLLER DRO</h3>
+
+            <div class="sim-control-group">
+              <label class="form-label">SELECT TOOLPATH PRESET</label>
+              <select id="cnc-preset-select" class="form-input">
+                <option value="profile">Contour Wall Milling (G01/G02/G03)</option>
+                <option value="pocket">Circular Spiral Pocketing (G02 Spiral)</option>
+              </select>
+            </div>
 
             <div class="sim-btn-row">
               <button id="cnc-play-btn" class="btn btn-primary btn-sm">PAUSE</button>
@@ -429,7 +460,6 @@
               <input type="range" id="cnc-feed-slider" min="0.2" max="3" step="0.1" value="1">
             </div>
 
-            <!-- DRO DIGITAL READOUT -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
               <div class="sim-readout-card">
                 <span id="cnc-dro-x" class="readout-value" style="font-size: 0.95rem;">X: 0.000</span>
@@ -468,7 +498,7 @@
       <div class="skills-grid">
         
         <!-- CARD 1: CAD/CAM -->
-        <div class="skill-card">
+        <div class="skill-card tilt-card">
           <div class="skill-card-header">
             <div class="skill-icon-wrap">
               <i class="fa-solid fa-compass-drafting"></i>
@@ -510,7 +540,7 @@
         </div>
 
         <!-- CARD 2: CNC & MACHINING -->
-        <div class="skill-card amber-theme">
+        <div class="skill-card amber-theme tilt-card">
           <div class="skill-card-header amber">
             <div class="skill-icon-wrap">
               <i class="fa-solid fa-industry"></i>
@@ -552,7 +582,7 @@
         </div>
 
         <!-- CARD 3: REFRIGERATION & THERMAL -->
-        <div class="skill-card">
+        <div class="skill-card tilt-card">
           <div class="skill-card-header">
             <div class="skill-icon-wrap">
               <i class="fa-solid fa-snowflake"></i>
@@ -594,7 +624,7 @@
         </div>
 
         <!-- CARD 4: AI & COMPUTATIONAL TOOLS -->
-        <div class="skill-card amber-theme">
+        <div class="skill-card amber-theme tilt-card">
           <div class="skill-card-header amber">
             <div class="skill-icon-wrap">
               <i class="fa-solid fa-brain"></i>
@@ -652,7 +682,7 @@
         <!-- TIMELINE 1: DIPLOMA -->
         <div class="timeline-item left">
           <div class="timeline-node"></div>
-          <div class="timeline-card">
+          <div class="timeline-card tilt-card">
             <span class="timeline-date">2023 – 2026 (PERSUING)</span>
             <h3 class="timeline-title">Diploma in Mechanical Engineering</h3>
             <p class="timeline-institution">Bankura Government Polytechnic | WBSCT&VE&SD</p>
@@ -670,7 +700,7 @@
         <!-- TIMELINE 2: HIGHER SECONDARY (12TH) -->
         <div class="timeline-item right">
           <div class="timeline-node"></div>
-          <div class="timeline-card">
+          <div class="timeline-card tilt-card">
             <span class="timeline-date">2023</span>
             <h3 class="timeline-title">Higher Secondary Examination (12th)</h3>
             <p class="timeline-institution">G.M.S.S.S. Niketan (H.S.) | W.B.C.H.S.E.</p>
@@ -687,7 +717,7 @@
         <!-- TIMELINE 3: SECONDARY (10TH) -->
         <div class="timeline-item left">
           <div class="timeline-node"></div>
-          <div class="timeline-card">
+          <div class="timeline-card tilt-card">
             <span class="timeline-date">2021</span>
             <h3 class="timeline-title">Secondary Examination (10th)</h3>
             <p class="timeline-institution">G.M.S.S.S. Niketan | W.B.B.S.E.</p>
@@ -714,7 +744,7 @@
         <p class="section-subtitle">Practical industry exposure in industrial refrigeration and HVAC systems.</p>
       </div>
 
-      <div class="internship-card">
+      <div class="internship-card tilt-card">
         <div>
           <span class="internship-badge"><i class="fa-solid fa-certificate"></i> CERTIFIED INDUSTRIAL INTERNSHIP</span>
           <h3 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.6rem;">Refrigeration & Air Conditioning (RAC)</h3>
@@ -744,55 +774,6 @@
     </div>
   </section>
 
-  <!-- CORE ACADEMIC AREAS -->
-  <section class="section" style="padding-top: 2rem;">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">CURRICULUM PILLARS</span>
-        <h2 class="section-title">Core Academic Disciplines</h2>
-        <p class="section-subtitle">Theoretical principles coupled with laboratory experimentation.</p>
-      </div>
-
-      <div class="academic-cards-grid">
-        <div class="academic-card">
-          <div class="academic-card-num">MODULE // 01</div>
-          <h3 class="academic-card-title">Theory of Machines</h3>
-          <p class="academic-card-desc">Kinematics of linkages, gear trains, cams, governors, and dynamic balancing of reciprocating machinery.</p>
-        </div>
-
-        <div class="academic-card">
-          <div class="academic-card-num">MODULE // 02</div>
-          <h3 class="academic-card-title">Manufacturing Process</h3>
-          <p class="academic-card-desc">Foundry, metal forming, conventional lathe & milling machining, welding metallurgy, and modern CNC automation.</p>
-        </div>
-
-        <div class="academic-card">
-          <div class="academic-card-num">MODULE // 03</div>
-          <h3 class="academic-card-title">Thermal Engineering</h3>
-          <p class="academic-card-desc">Thermodynamic cycles (Otto, Diesel, Rankine), steam boilers, internal combustion engines, and heat transfer.</p>
-        </div>
-
-        <div class="academic-card">
-          <div class="academic-card-num">MODULE // 04</div>
-          <h3 class="academic-card-title">Engineering Metrology</h3>
-          <p class="academic-card-desc">Precision measurement instruments (Vernier, Micrometer, Dial gauges), GD&T tolerances, and surface roughness evaluation.</p>
-        </div>
-
-        <div class="academic-card">
-          <div class="academic-card-num">MODULE // 05</div>
-          <h3 class="academic-card-title">Refrigeration & AC</h3>
-          <p class="academic-card-desc">Vapor Compression & Absorption cycles, psychrometric charts, cooling load estimation, and duct design.</p>
-        </div>
-
-        <div class="academic-card">
-          <div class="academic-card-num">MODULE // 06</div>
-          <h3 class="academic-card-title">Automobile Engineering</h3>
-          <p class="academic-card-desc">Chassis layout, transmission gearboxes, differential mechanisms, suspension geometry, and braking systems.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- PROJECTS & CAD GALLERY -->
   <section id="projects" class="section">
     <div class="container">
@@ -813,7 +794,7 @@
       <div class="projects-grid">
         
         <!-- PROJECT 1 -->
-        <div class="project-card" data-category="cad">
+        <div class="project-card tilt-card" data-category="cad">
           <div class="project-thumb">
             <span class="project-category-badge">CAD / SolidWorks</span>
             <svg class="project-svg-art" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
@@ -838,7 +819,7 @@
         </div>
 
         <!-- PROJECT 2 -->
-        <div class="project-card" data-category="auto">
+        <div class="project-card tilt-card" data-category="auto">
           <div class="project-thumb">
             <span class="project-category-badge">Automobile / CAD</span>
             <svg class="project-svg-art" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
@@ -861,7 +842,7 @@
         </div>
 
         <!-- PROJECT 3 -->
-        <div class="project-card" data-category="cnc">
+        <div class="project-card tilt-card" data-category="cnc">
           <div class="project-thumb">
             <span class="project-category-badge">CNC / Manufacturing</span>
             <svg class="project-svg-art" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
@@ -883,7 +864,7 @@
         </div>
 
         <!-- PROJECT 4 -->
-        <div class="project-card" data-category="rac">
+        <div class="project-card tilt-card" data-category="rac">
           <div class="project-thumb">
             <span class="project-category-badge">RAC / HVAC</span>
             <svg class="project-svg-art" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
@@ -898,7 +879,7 @@
           </div>
           <div class="project-content">
             <h3 class="project-title">Industrial RAC Chiller & VCR Schematic</h3>
-            <p class="project-desc">Complete thermodynamic cycle design with state-point enthalpy calculations ($h_1, h_2, h_3, h_4$), Coefficient of Performance (COP) evaluation, and duct sizing for air conditioning.</p>
+            <p class="project-desc">Complete thermodynamic cycle design with state-point enthalpy calculations, COP evaluation, and duct sizing for air conditioning systems.</p>
             <div class="project-tech-tags">
               <span class="tech-tag">VCR Cycle</span>
               <span class="tech-tag">Psychrometrics</span>
@@ -908,7 +889,7 @@
         </div>
 
         <!-- PROJECT 5 -->
-        <div class="project-card" data-category="auto">
+        <div class="project-card tilt-card" data-category="auto">
           <div class="project-thumb">
             <span class="project-category-badge">Automobile / CAD</span>
             <svg class="project-svg-art" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
@@ -931,7 +912,7 @@
         </div>
 
         <!-- PROJECT 6 -->
-        <div class="project-card" data-category="cad">
+        <div class="project-card tilt-card" data-category="cad">
           <div class="project-thumb">
             <span class="project-category-badge">CAD / Metrology</span>
             <svg class="project-svg-art" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
@@ -956,10 +937,84 @@
     </div>
   </section>
 
+  <!-- COMMERCIAL FEATURE: ENGINEERING PROJECT COST ESTIMATOR -->
+  <section id="estimator" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag amber-tag"><i class="fa-solid fa-calculator"></i> COMMERCIAL ESTIMATOR</span>
+        <h2 class="section-title">Engineering Project Cost Calculator</h2>
+        <p class="section-subtitle">Calculate instant project estimates for CAD modeling, CNC programming, and thermal engineering design.</p>
+      </div>
+
+      <div class="estimator-card tilt-card">
+        <div class="estimator-inputs">
+          <div class="form-group">
+            <label class="form-label">SERVICE CATEGORY</label>
+            <select id="calc-service-type" class="form-input">
+              <option value="solidworks_3d">3D Parametric CAD Modeling & Assembly ($45/hr)</option>
+              <option value="cad_2d">2D Technical Drafting & GD&T ($25/hr)</option>
+              <option value="cnc_cam">CNC Toolpathing & G-Code Automation ($55/hr)</option>
+              <option value="rac_hvac">RAC / HVAC Thermal System Design ($50/hr)</option>
+              <option value="full_assembly">Turnkey Mechanical Product Engineering ($65/hr)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">GEOMETRIC COMPLEXITY</label>
+            <select id="calc-complexity" class="form-input">
+              <option value="simple">Standard Geometry (Prismatic / Simple Turns)</option>
+              <option value="moderate" selected>Moderate (Multi-feature / Gears / Housings)</option>
+              <option value="advanced">Complex (Curved Surfaces / Turbines / Mates)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">ESTIMATED NUMBER OF UNIQUE COMPONENTS</label>
+            <input type="number" id="calc-parts-count" class="form-input" min="1" max="50" value="3">
+          </div>
+        </div>
+
+        <div class="estimator-summary-box">
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-cyan);">ESTIMATED PROJECT QUOTE</span>
+          <div id="calc-total-cost" class="estimator-cost-val">$756 USD</div>
+          <div id="calc-total-hours" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-amber); margin-bottom: 1.2rem;">
+            17 Estimated Engineering Hours
+          </div>
+          <a href="#contact" class="btn btn-primary btn-sm" style="width: 100%;">
+            <i class="fa-solid fa-file-contract"></i> Request Official Quotation
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMERCIAL FEATURE: INTERACTIVE CLI TERMINAL ASSISTANT -->
+  <section class="section" style="padding-top: 1rem;">
+    <div class="container">
+      <div class="terminal-cli-wrap">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="dot-red"></span>
+            <span class="dot-yellow"></span>
+            <span class="dot-green"></span>
+          </div>
+          <span style="color: var(--accent-cyan);"><i class="fa-solid fa-terminal"></i> CAD/ENGINEERING CLI ASSISTANT // TYPE 'help'</span>
+        </div>
+        <div id="cli-terminal-output" class="cli-output">
+          <div class="text-dim">Antigravity CAD Terminal Engine initialized. Type "help" for a list of commands (skills, cad, cnc, rac, quote, contact).</div>
+        </div>
+        <div class="cli-input-row">
+          <span class="text-cyan">> user@kuntal-eng:~$</span>
+          <input type="text" id="cli-terminal-input" class="cli-input" placeholder="Type a command (e.g. skills, cad, quote)..." autocomplete="off">
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- RESUME BANNER SECTION -->
   <section class="section" style="padding-top: 1rem;">
     <div class="container">
-      <div class="resume-section-banner">
+      <div class="resume-section-banner tilt-card">
         <div class="resume-banner-info">
           <h3>Ready to review the complete credentials?</h3>
           <p class="text-muted">Access Kuntal Ghosh's full verified resume sheet, academic transcripts, and contact documentation.</p>
@@ -987,7 +1042,7 @@
 
       <div class="contact-grid">
         <div class="contact-info-col">
-          <div class="contact-card-item">
+          <div class="contact-card-item tilt-card">
             <div class="contact-card-icon">
               <i class="fa-solid fa-phone"></i>
             </div>
@@ -997,7 +1052,7 @@
             </div>
           </div>
 
-          <div class="contact-card-item">
+          <div class="contact-card-item tilt-card">
             <div class="contact-card-icon">
               <i class="fa-solid fa-envelope"></i>
             </div>
@@ -1007,7 +1062,7 @@
             </div>
           </div>
 
-          <div class="contact-card-item">
+          <div class="contact-card-item tilt-card">
             <div class="contact-card-icon">
               <i class="fa-solid fa-location-dot"></i>
             </div>
@@ -1017,7 +1072,7 @@
             </div>
           </div>
 
-          <div class="contact-card-item">
+          <div class="contact-card-item tilt-card">
             <div class="contact-card-icon">
               <i class="fa-solid fa-graduation-cap"></i>
             </div>
@@ -1029,7 +1084,7 @@
         </div>
 
         <!-- TERMINAL CONTACT FORM -->
-        <div class="contact-form-wrap">
+        <div class="contact-form-wrap tilt-card">
           <div class="terminal-header">
             <div class="terminal-dots">
               <span class="dot-red"></span>
@@ -1089,7 +1144,6 @@
         </div>
       </div>
 
-      <!-- Printable Resume Sheet Layout -->
       <div class="resume-sheet">
         <div class="resume-sheet-header">
           <h1>KUNTAL GHOSH</h1>
@@ -1143,7 +1197,7 @@
             <em>Total: 318 | 63.6% | Overall Grade: B+</em></p>
 
             <p style="margin-top: 0.5rem;"><strong>Secondary Examination (10th)</strong> | 2021<br>
-            G.M.S.S.S. Niketan | W.B.B.S.E.<br>
+            G.M.S.S. Niketan | W.B.B.S.E.<br>
             <em>Total: 497 | 71% | Overall Grade: A</em></p>
 
             <h3 class="resume-sec-title">Training / Internship</h3>
@@ -1182,10 +1236,11 @@
           <ul class="footer-links">
             <li><a href="#hero">Hero Telemetry</a></li>
             <li><a href="#about">About & Objective</a></li>
-            <li><a href="#lab">Interactive Simulation Lab</a></li>
-            <li><a href="#skills">Technical Skills</a></li>
+            <li><a href="#lab">Simulation Studio</a></li>
+            <li><a href="#skills">Technical Matrix</a></li>
             <li><a href="#academics">Education Roadmap</a></li>
             <li><a href="#internship">RAC Internship</a></li>
+            <li><a href="#estimator">Cost Estimator</a></li>
             <li><a href="#projects">CAD Gallery</a></li>
           </ul>
         </div>
@@ -1202,7 +1257,7 @@
 
       <div class="footer-bottom">
         <span>&copy; 2026 Kuntal Ghosh. All mechanical engineering schematics and CAD assets engineered with precision.</span>
-        <span>GITHUB PAGES READY // BUILD 2.0</span>
+        <span>COMMERCIAL EDITION // BUILD 3.0</span>
       </div>
     </div>
   </footer>
@@ -1212,6 +1267,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Mechanical Engineering Simulators & UI Scripts -->
+  <script src="js/audio-engine.js"></script>
   <script src="js/gears-canvas.js"></script>
   <script src="js/piston-simulator.js"></script>
   <script src="js/cnc-simulator.js"></script>
