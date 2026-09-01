@@ -1,6 +1,6 @@
 /**
- * 4-STROKE RECIPROCATING ENGINE & KINEMATICS SIMULATOR
- * Kuntal Ghosh Mechanical Engineering Portfolio
+ * COMMERCIAL-GRADE 4-STROKE ENGINE & REAL-TIME PV-DIAGRAM SIMULATOR
+ * Kinematics + Dynamic Pressure-Volume Indicator Card
  */
 
 class PistonEngineSimulator {
@@ -43,6 +43,7 @@ class PistonEngineSimulator {
     const toggleBtn = document.getElementById('piston-toggle-btn');
     if (toggleBtn) {
       toggleBtn.addEventListener('click', () => {
+        if (window.mechAudio) window.mechAudio.playMechanicalClick(1000);
         this.isPlaying = !this.isPlaying;
         toggleBtn.textContent = this.isPlaying ? 'PAUSE ENGINE' : 'START ENGINE';
       });
@@ -50,13 +51,12 @@ class PistonEngineSimulator {
   }
 
   getKinematics() {
-    const theta = this.crankAngle % (Math.PI * 4);
+    const theta = this.crankAngle % (Math.PI * 4); // 720 deg for 4-stroke cycle
     const r = this.crankRadius;
     const l = this.rodLength;
 
     const crankX = r * Math.sin(theta);
     const crankY = r * Math.cos(theta);
-
     const pinY = crankY - Math.sqrt(l * l - crankX * crankX);
     const pinX = 0;
 
@@ -64,31 +64,42 @@ class PistonEngineSimulator {
     const n = l / r;
     const velocity = r * 0.001 * omega * (Math.sin(theta) + Math.sin(2 * theta) / (2 * n));
 
-    let stage = '1. SUCTION STROKE';
+    const deg = (theta * 180 / Math.PI) % 720;
+    let stage = '1. INTAKE (SUCTION)';
     let stageColor = '#00f0ff';
     let isCombusting = false;
     let intakeOpen = false;
     let exhaustOpen = false;
+    let cylinderPressure = 1.0; // in bar
 
-    const deg = (theta * 180 / Math.PI) % 720;
+    // Otto Cycle 4-Stroke PV Profile
+    // Normalized piston volume 0 (TDC) to 1 (BDC)
+    const normVol = (pinY - (-l - r)) / (2 * r);
+
     if (deg >= 0 && deg < 180) {
       stage = '1. INTAKE (SUCTION)';
       stageColor = '#00f0ff';
       intakeOpen = true;
+      cylinderPressure = 0.95;
     } else if (deg >= 180 && deg < 360) {
       stage = '2. COMPRESSION';
       stageColor = '#ff9d00';
+      const compRatio = 1 / Math.max(0.1, normVol);
+      cylinderPressure = Math.pow(compRatio, 1.35) * 1.0;
     } else if (deg >= 360 && deg < 540) {
       stage = '3. POWER (EXPANSION)';
       stageColor = '#ff3b30';
-      isCombusting = deg < 440;
+      isCombusting = deg < 430;
+      const expRatio = 1 / Math.max(0.1, normVol);
+      cylinderPressure = isCombusting ? 45.0 - (deg - 360) * 0.3 : Math.pow(expRatio, 1.3) * 3.5;
     } else {
       stage = '4. EXHAUST';
       stageColor = '#a855f7';
       exhaustOpen = true;
+      cylinderPressure = 1.2;
     }
 
-    return { theta, crankX, crankY, pinX, pinY, velocity, stage, stageColor, isCombusting, intakeOpen, exhaustOpen, deg };
+    return { theta, crankX, crankY, pinX, pinY, velocity, stage, stageColor, isCombusting, intakeOpen, exhaustOpen, deg, cylinderPressure, normVol };
   }
 
   draw() {
@@ -96,9 +107,10 @@ class PistonEngineSimulator {
     ctx.clearRect(0, 0, this.width, this.height);
 
     const k = this.getKinematics();
-    const centerX = this.width * 0.42;
+    const centerX = this.width * 0.34;
     const crankCenterY = this.height * 0.72;
 
+    // Blueprint Grid
     ctx.strokeStyle = 'rgba(0, 240, 255, 0.04)';
     ctx.lineWidth = 1;
     for (let x = 0; x < this.width; x += 25) {
@@ -108,6 +120,7 @@ class PistonEngineSimulator {
       ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(this.width, y); ctx.stroke();
     }
 
+    // Cylinder Sleeve Walls
     const cylTop = crankCenterY - this.rodLength - this.crankRadius - 60;
     const cylBottom = crankCenterY - this.rodLength + this.crankRadius + 30;
     const halfBore = this.bore / 2;
@@ -120,16 +133,18 @@ class PistonEngineSimulator {
     ctx.moveTo(centerX + halfBore, cylTop); ctx.lineTo(centerX + halfBore, cylBottom);
     ctx.stroke();
 
+    // Cylinder Head
     ctx.beginPath();
-    ctx.moveTo(centerX - halfBore - 15, cylTop);
-    ctx.lineTo(centerX + halfBore + 15, cylTop);
+    ctx.moveTo(centerX - halfBore - 15, cylTop); ctx.lineTo(centerX + halfBore + 15, cylTop);
     ctx.stroke();
 
+    // Spark Plug
     ctx.fillStyle = '#ff9d00';
     ctx.fillRect(centerX - 4, cylTop - 18, 8, 18);
     ctx.strokeStyle = '#fff';
     ctx.strokeRect(centerX - 4, cylTop - 18, 8, 18);
 
+    // Intake & Exhaust Valves
     const intakeOffset = k.intakeOpen ? 8 : 0;
     ctx.strokeStyle = k.intakeOpen ? '#00f0ff' : '#475569';
     ctx.lineWidth = 3;
@@ -146,6 +161,7 @@ class PistonEngineSimulator {
     ctx.stroke();
     ctx.fillRect(centerX + 12, cylTop + exhaustOffset, 12, 3);
 
+    // Combustion Flame Effect
     if (k.isCombusting) {
       const grad = ctx.createRadialGradient(centerX, cylTop + 20, 5, centerX, cylTop + 35, 45);
       grad.addColorStop(0, 'rgba(255, 240, 100, 0.95)');
@@ -155,6 +171,7 @@ class PistonEngineSimulator {
       ctx.fillRect(centerX - halfBore + 2, cylTop + 2, this.bore - 4, (crankCenterY + k.pinY - 30) - cylTop);
     }
 
+    // Piston Body
     const pistonTopY = crankCenterY + k.pinY - 35;
     ctx.fillStyle = '#182847';
     ctx.fillRect(centerX - halfBore + 2, pistonTopY, this.bore - 4, 45);
@@ -162,6 +179,7 @@ class PistonEngineSimulator {
     ctx.lineWidth = 2;
     ctx.strokeRect(centerX - halfBore + 2, pistonTopY, this.bore - 4, 45);
 
+    // Compression Ring Grooves
     ctx.strokeStyle = '#ff9d00';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -169,6 +187,7 @@ class PistonEngineSimulator {
     ctx.moveTo(centerX - halfBore + 2, pistonTopY + 14); ctx.lineTo(centerX + halfBore - 2, pistonTopY + 14);
     ctx.stroke();
 
+    // Connecting Rod
     const pinActualX = centerX + k.pinX;
     const pinActualY = crankCenterY + k.pinY;
     const crankActualX = centerX + k.crankX;
@@ -187,80 +206,116 @@ class PistonEngineSimulator {
     ctx.stroke();
 
     ctx.fillStyle = '#ff9d00';
-    ctx.beginPath();
-    ctx.arc(pinActualX, pinActualY, 6, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(pinActualX, pinActualY, 6, 0, Math.PI * 2); ctx.fill();
 
-    ctx.save();
-    ctx.translate(centerX, crankCenterY);
-    ctx.beginPath();
-    ctx.arc(0, 0, this.crankRadius + 14, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([3, 3]);
-    ctx.stroke();
-    ctx.restore();
-
+    // Crankshaft & Counterweight
     ctx.fillStyle = '#0f1c38';
-    ctx.beginPath();
-    ctx.arc(centerX, crankCenterY, 18, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#ff9d00';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    ctx.beginPath(); ctx.arc(centerX, crankCenterY, 18, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#ff9d00'; ctx.lineWidth = 2; ctx.stroke();
 
     ctx.fillStyle = '#00f0ff';
-    ctx.beginPath();
-    ctx.arc(crankActualX, crankActualY, 8, 0, Math.PI * 2);
-    ctx.fill();
-
+    ctx.beginPath(); ctx.arc(crankActualX, crankActualY, 8, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
-    this.drawDashboard(k);
+
+    // DRAW DYNAMIC PV-DIAGRAM (Right side)
+    this.drawPVDiagram(k);
   }
 
-  drawDashboard(k) {
+  drawPVDiagram(k) {
     const ctx = this.ctx;
-    const dx = this.width - 210;
-    const dy = 30;
+    const px = this.width * 0.62;
+    const py = 35;
+    const pw = this.width * 0.34;
+    const ph = this.height * 0.45;
 
     ctx.save();
-    ctx.fillStyle = 'rgba(13, 21, 39, 0.85)';
+    // PV Frame Box
+    ctx.fillStyle = 'rgba(8, 14, 26, 0.9)';
     ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
     ctx.lineWidth = 1;
-    ctx.fillRect(dx, dy, 190, 220);
-    ctx.strokeRect(dx, dy, 190, 220);
+    ctx.fillRect(px, py, pw, ph);
+    ctx.strokeRect(px, py, pw, ph);
 
+    // Title
     ctx.fillStyle = '#00f0ff';
-    ctx.font = '11px "Orbitron", sans-serif';
-    ctx.fillText('ENGINE TELEMETRY', dx + 12, dy + 22);
+    ctx.font = '10px "Orbitron", sans-serif';
+    ctx.fillText('OTTO CYCLE P-V DIAGRAM', px + 10, py + 18);
+
+    // P and V Axes
+    const axOriginX = px + 35;
+    const axOriginY = py + ph - 25;
+    const axWidth = pw - 50;
+    const axHeight = ph - 55;
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(axOriginX, py + 25); ctx.lineTo(axOriginX, axOriginY);
+    ctx.lineTo(axOriginX + axWidth, axOriginY);
+    ctx.stroke();
+
+    // Axis Labels
+    ctx.fillStyle = '#8fa0c2';
+    ctx.font = '9px "JetBrains Mono", monospace';
+    ctx.fillText('P (bar)', axOriginX - 30, py + 35);
+    ctx.fillText('V (Volume)', axOriginX + axWidth - 45, axOriginY + 18);
+
+    // Theoretical Otto Cycle Loop (Dashed Cyan)
+    const pt1 = { x: axOriginX + axWidth * 0.9, y: axOriginY - axHeight * 0.08 }; // BDC Intake
+    const pt2 = { x: axOriginX + axWidth * 0.15, y: axOriginY - axHeight * 0.42 }; // TDC Compression
+    const pt3 = { x: axOriginX + axWidth * 0.15, y: axOriginY - axHeight * 0.92 }; // Peak Combustion
+    const pt4 = { x: axOriginX + axWidth * 0.9, y: axOriginY - axHeight * 0.3 };  // Expansion BDC
+
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(pt1.x, pt1.y);
+    ctx.quadraticCurveTo(axOriginX + axWidth * 0.45, axOriginY - axHeight * 0.15, pt2.x, pt2.y);
+    ctx.lineTo(pt3.x, pt3.y);
+    ctx.quadraticCurveTo(axOriginX + axWidth * 0.45, axOriginY - axHeight * 0.55, pt4.x, pt4.y);
+    ctx.lineTo(pt1.x, pt1.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Live Operating Point (Red/Amber Glowing Marker)
+    const curX = axOriginX + axWidth * (0.15 + k.normVol * 0.75);
+    const curP_norm = Math.min(1.0, k.cylinderPressure / 48.0);
+    const curY = axOriginY - axHeight * curP_norm;
+
+    ctx.fillStyle = k.stageColor;
+    ctx.beginPath();
+    ctx.arc(curX, curY, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Telemetry Text Card Below PV
+    const ty = py + ph + 12;
+    const th = this.height - ty - 25;
+    ctx.fillStyle = 'rgba(8, 14, 26, 0.9)';
+    ctx.strokeStyle = 'rgba(255, 157, 0, 0.35)';
+    ctx.fillRect(px, ty, pw, th);
+    ctx.strokeRect(px, ty, pw, th);
 
     ctx.fillStyle = k.stageColor;
     ctx.font = 'bold 10px "JetBrains Mono", monospace';
-    ctx.fillText(k.stage, dx + 12, dy + 48);
+    ctx.fillText(k.stage, px + 10, ty + 18);
 
     ctx.fillStyle = '#8fa0c2';
     ctx.font = '9px "JetBrains Mono", monospace';
-    ctx.fillText('CRANK ANGLE (theta):', dx + 12, dy + 75);
+    ctx.fillText(`CYL. PRESSURE:`, px + 10, ty + 38);
     ctx.fillStyle = '#ff9d00';
     ctx.font = 'bold 12px "JetBrains Mono", monospace';
-    ctx.fillText(`${k.deg.toFixed(1)} deg`, dx + 12, dy + 92);
+    ctx.fillText(`${k.cylinderPressure.toFixed(1)} bar`, px + 10, ty + 54);
 
     ctx.fillStyle = '#8fa0c2';
     ctx.font = '9px "JetBrains Mono", monospace';
-    ctx.fillText('PISTON VELOCITY:', dx + 12, dy + 120);
+    ctx.fillText(`PISTON VELOCITY:`, px + 10, ty + 74);
     ctx.fillStyle = '#00f0ff';
     ctx.font = 'bold 12px "JetBrains Mono", monospace';
-    ctx.fillText(`${Math.abs(k.velocity).toFixed(2)} m/s`, dx + 12, dy + 137);
-
-    ctx.fillStyle = '#8fa0c2';
-    ctx.font = '9px "JetBrains Mono", monospace';
-    ctx.fillText('BORE x STROKE:', dx + 12, dy + 165);
-    ctx.fillStyle = '#fff';
-    ctx.font = '11px "JetBrains Mono", monospace';
-    ctx.fillText('68mm x 90mm', dx + 12, dy + 182);
-
-    ctx.fillStyle = '#8fa0c2';
-    ctx.fillText('CR: 10.5 : 1 (Otto)', dx + 12, dy + 204);
+    ctx.fillText(`${Math.abs(k.velocity).toFixed(2)} m/s`, px + 10, ty + 90);
 
     ctx.restore();
 
@@ -269,7 +324,7 @@ class PistonEngineSimulator {
     const angleEl = document.getElementById('piston-angle-val');
     if (stageEl) stageEl.textContent = k.stage;
     if (velEl) velEl.textContent = `${Math.abs(k.velocity).toFixed(2)} m/s`;
-    if (angleEl) angleEl.textContent = `${k.deg.toFixed(0)} deg`;
+    if (angleEl) angleEl.textContent = `${k.deg.toFixed(0)}°`;
   }
 
   animate() {
