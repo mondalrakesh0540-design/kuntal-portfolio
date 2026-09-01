@@ -1,6 +1,6 @@
 /**
- * THREE.JS 3D MECHANICAL CAD COMPONENT EXPLORER
- * Kuntal Ghosh Mechanical Engineering Portfolio
+ * COMMERCIAL-GRADE 3D MECHANICAL CAD STUDIO (Three.js WebGL)
+ * Features: Planetary Gearbox, 4-Valve Head, Turbine Impeller, Caliper Measuring Tool, Exploded Disassembly
  */
 
 class MechanicalCADViewer {
@@ -12,10 +12,12 @@ class MechanicalCADViewer {
     this.materialPreset = 'steel';
     this.autoRotate = true;
     this.explodeFactor = 0;
-    this.currentModelType = 'gear';
+    this.currentModelType = 'planetary';
+    this.caliperMode = false;
+    this.caliperPoints = [];
 
     this.initThree();
-    this.loadModel('gear');
+    this.loadModel('planetary');
     this.bindControls();
     this.animate = this.animate.bind(this);
     this.animate();
@@ -25,16 +27,13 @@ class MechanicalCADViewer {
     const width = this.container.clientWidth || 600;
     const height = this.container.clientHeight || 450;
 
-    // Scene
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x0a1122);
-    this.scene.fog = new THREE.FogExp2(0x0a1122, 0.015);
+    this.scene.background = new THREE.Color(0x070d18);
+    this.scene.fog = new THREE.FogExp2(0x070d18, 0.012);
 
-    // Camera
     this.camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    this.camera.position.set(25, 20, 35);
+    this.camera.position.set(30, 25, 40);
 
-    // Renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setSize(width, height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -42,7 +41,6 @@ class MechanicalCADViewer {
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.container.appendChild(this.renderer.domElement);
 
-    // Orbit Controls
     if (typeof THREE.OrbitControls !== 'undefined') {
       this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
       this.controls.enableDamping = true;
@@ -51,32 +49,34 @@ class MechanicalCADViewer {
       this.controls.minDistance = 5;
     }
 
-    // CAD Blueprint Grid Floor
-    const gridHelper = new THREE.GridHelper(60, 30, 0x00f0ff, 0x13274f);
-    gridHelper.position.y = -12;
+    // Blueprint CAD Grid Floor
+    const gridHelper = new THREE.GridHelper(70, 35, 0x00f0ff, 0x112344);
+    gridHelper.position.y = -14;
     this.scene.add(gridHelper);
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    // Studio Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
     this.scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0x00f0ff, 1.2);
-    dirLight1.position.set(30, 40, 30);
+    const dirLight1 = new THREE.DirectionalLight(0x00f0ff, 1.3);
+    dirLight1.position.set(35, 45, 35);
     this.scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0xff9d00, 0.8);
-    dirLight2.position.set(-30, -20, -30);
+    const dirLight2 = new THREE.DirectionalLight(0xff9d00, 0.9);
+    dirLight2.position.set(-35, -20, -35);
     this.scene.add(dirLight2);
 
-    const pointLight = new THREE.PointLight(0xffffff, 1.0, 50);
-    pointLight.position.set(0, 15, 0);
+    const pointLight = new THREE.PointLight(0xffffff, 1.2, 60);
+    pointLight.position.set(0, 20, 0);
     this.scene.add(pointLight);
 
-    // Model group
     this.modelGroup = new THREE.Group();
     this.scene.add(this.modelGroup);
 
-    // Window resize
+    // Raycaster for 3D measurement caliper
+    this.raycaster = new THREE.Raycaster();
+    this.mouse = new THREE.Vector2();
+
     window.addEventListener('resize', () => {
       const w = this.container.clientWidth || 600;
       const h = this.container.clientHeight || 450;
@@ -86,7 +86,7 @@ class MechanicalCADViewer {
     });
   }
 
-  getMaterial(customColor = null) {
+  getMaterial(customColor = null, roughness = 0.35, metalness = 0.85) {
     const isWire = this.shadingMode === 'wireframe';
     const isBlueprint = this.shadingMode === 'blueprint';
 
@@ -100,28 +100,36 @@ class MechanicalCADViewer {
     }
 
     let matProps = {
-      roughness: 0.35,
-      metalness: 0.85,
+      roughness: roughness,
+      metalness: metalness,
       wireframe: isWire
     };
 
     if (this.materialPreset === 'titanium') {
-      matProps.color = customColor || 0x7a8b9e;
-      matProps.roughness = 0.25;
+      matProps.color = customColor || 0x6e7f91;
+      matProps.roughness = 0.22;
       matProps.metalness = 0.95;
+    } else if (this.materialPreset === 'gold') {
+      matProps.color = customColor || 0xffd700;
+      matProps.roughness = 0.25;
+      matProps.metalness = 0.9;
+    } else if (this.materialPreset === 'carbon') {
+      matProps.color = customColor || 0x1f2937;
+      matProps.roughness = 0.55;
+      matProps.metalness = 0.3;
     } else if (this.materialPreset === 'brass') {
       matProps.color = customColor || 0xd4af37;
-      matProps.roughness = 0.3;
-      matProps.metalness = 0.8;
+      matProps.roughness = 0.28;
+      matProps.metalness = 0.82;
     } else if (this.materialPreset === 'cyan') {
       matProps.color = customColor || 0x00f0ff;
-      matProps.roughness = 0.2;
-      matProps.metalness = 0.5;
+      matProps.roughness = 0.15;
+      matProps.metalness = 0.6;
     } else {
-      // Tool Steel
+      // Machined Tool Steel
       matProps.color = customColor || 0xa0aec0;
-      matProps.roughness = 0.4;
-      matProps.metalness = 0.85;
+      matProps.roughness = 0.38;
+      matProps.metalness = 0.88;
     }
 
     return new THREE.MeshStandardMaterial(matProps);
@@ -129,158 +137,169 @@ class MechanicalCADViewer {
 
   loadModel(type) {
     this.currentModelType = type;
-    // Clear existing children
     while (this.modelGroup.children.length > 0) {
-      const obj = this.modelGroup.children[0];
-      this.modelGroup.remove(obj);
+      this.modelGroup.remove(this.modelGroup.children[0]);
     }
-
     this.parts = [];
 
-    if (type === 'gear') {
-      this.buildFlangedGear();
-    } else if (type === 'piston') {
-      this.buildPistonAssembly();
-    } else if (type === 'shaft') {
-      this.buildTransmissionShaft();
+    if (type === 'planetary') {
+      this.buildPlanetaryGearbox();
+    } else if (type === 'engine') {
+      this.buildEngineAssembly();
+    } else if (type === 'turbine') {
+      this.buildTurbineImpeller();
     }
   }
 
-  buildFlangedGear() {
-    const gearGroup = new THREE.Group();
+  // 1. PLANETARY GEARBOX ASSEMBLY
+  buildPlanetaryGearbox() {
+    const group = new THREE.Group();
 
-    // 1. Gear Rim and Teeth
-    const teethCount = 20;
-    const rimRadius = 12;
-    const gearMat = this.getMaterial(0x94a3b8);
+    // Sun Gear (Center)
+    const sunMat = this.getMaterial(0xff9d00);
+    const sunGeo = new THREE.CylinderGeometry(4.5, 4.5, 5, 24);
+    const sunMesh = new THREE.Mesh(sunGeo, sunMat);
+    group.add(sunMesh);
 
-    // Rim Cylinder
-    const rimGeo = new THREE.CylinderGeometry(rimRadius, rimRadius, 4, 32);
-    const rimMesh = new THREE.Mesh(rimGeo, gearMat);
-    gearGroup.add(rimMesh);
+    for (let i = 0; i < 14; i++) {
+      const a = (i * Math.PI * 2) / 14;
+      const tGeo = new THREE.BoxGeometry(1.2, 5, 1.4);
+      const tMesh = new THREE.Mesh(tGeo, sunMat);
+      tMesh.position.set(Math.cos(a) * 5.0, 0, Math.sin(a) * 5.0);
+      tMesh.rotation.y = -a;
+      group.add(tMesh);
+    }
+    this.parts.push({ mesh: sunMesh, explodeDir: new THREE.Vector3(0, 1.8, 0) });
 
-    // Individual Involute Teeth
-    for (let i = 0; i < teethCount; i++) {
-      const angle = (i * Math.PI * 2) / teethCount;
-      const toothGeo = new THREE.BoxGeometry(2.2, 4, 3.2);
-      const toothMesh = new THREE.Mesh(toothGeo, gearMat);
-      toothMesh.position.set(
-        Math.cos(angle) * (rimRadius + 1.2),
-        0,
-        Math.sin(angle) * (rimRadius + 1.2)
-      );
-      toothMesh.rotation.y = -angle;
-      gearGroup.add(toothMesh);
+    // 3 Planet Gears + Carrier Arm
+    const planetMat = this.getMaterial(0x00f0ff);
+    for (let p = 0; p < 3; p++) {
+      const pa = (p * Math.PI * 2) / 3;
+      const px = Math.cos(pa) * 11;
+      const pz = Math.sin(pa) * 11;
+
+      const pGeo = new THREE.CylinderGeometry(3.5, 3.5, 4.5, 20);
+      const pMesh = new THREE.Mesh(pGeo, planetMat);
+      pMesh.position.set(px, 0, pz);
+      group.add(pMesh);
+
+      for (let pt = 0; pt < 10; pt++) {
+        const pta = (pt * Math.PI * 2) / 10;
+        const ptGeo = new THREE.BoxGeometry(1, 4.5, 1.2);
+        const ptMesh = new THREE.Mesh(ptGeo, planetMat);
+        ptMesh.position.set(px + Math.cos(pta) * 3.9, 0, pz + Math.sin(pta) * 3.9);
+        ptMesh.rotation.y = -pta;
+        group.add(ptMesh);
+      }
+
+      this.parts.push({ mesh: pMesh, explodeDir: new THREE.Vector3(Math.cos(pa) * 1.5, 0, Math.sin(pa) * 1.5) });
     }
 
-    // 2. Center Flange Hub (Explodable Part)
-    const hubMat = this.getMaterial(0x00f0ff);
-    const hubGeo = new THREE.CylinderGeometry(6, 6, 7, 32);
-    const hubMesh = new THREE.Mesh(hubGeo, hubMat);
-    hubMesh.position.y = 0;
-    gearGroup.add(hubMesh);
+    // Outer Ring Gear (Annulus)
+    const ringMat = this.getMaterial(0x64748b);
+    const ringGeo = new THREE.CylinderGeometry(17, 17, 6, 48, 1, true);
+    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+    group.add(ringMesh);
+    this.parts.push({ mesh: ringMesh, explodeDir: new THREE.Vector3(0, -1.5, 0) });
 
-    // 3. Central Shaft with Keyway
-    const shaftMat = this.getMaterial(0xd4af37);
-    const shaftGeo = new THREE.CylinderGeometry(3, 3, 16, 32);
-    const shaftMesh = new THREE.Mesh(shaftGeo, shaftMat);
-    shaftMesh.position.y = 0;
-    gearGroup.add(shaftMesh);
+    // Carrier Flange Base
+    const carrierMat = this.getMaterial(0xd4af37);
+    const carrierGeo = new THREE.CylinderGeometry(13, 13, 2, 32);
+    const carrierMesh = new THREE.Mesh(carrierGeo, carrierMat);
+    carrierMesh.position.y = -3.5;
+    group.add(carrierMesh);
+    this.parts.push({ mesh: carrierMesh, explodeDir: new THREE.Vector3(0, -2.2, 0) });
 
-    // 4. Hex Retaining Bolts on Flange
-    for (let b = 0; b < 6; b++) {
-      const bAngle = (b * Math.PI * 2) / 6;
-      const boltGeo = new THREE.CylinderGeometry(0.8, 0.8, 1.2, 6);
-      const boltMesh = new THREE.Mesh(boltGeo, this.getMaterial(0xff9d00));
-      boltMesh.position.set(Math.cos(bAngle) * 4.5, 3.8, Math.sin(bAngle) * 4.5);
-      gearGroup.add(boltMesh);
-      this.parts.push({ mesh: boltMesh, explodeDir: new THREE.Vector3(Math.cos(bAngle), 1.5, Math.sin(bAngle)) });
-    }
-
-    this.parts.push({ mesh: shaftMesh, explodeDir: new THREE.Vector3(0, -1.5, 0) });
-    this.parts.push({ mesh: hubMesh, explodeDir: new THREE.Vector3(0, 1.2, 0) });
-
-    this.modelGroup.add(gearGroup);
+    this.modelGroup.add(group);
   }
 
-  buildPistonAssembly() {
-    const pistonGroup = new THREE.Group();
+  // 2. 4-VALVE CYLINDER HEAD & PISTON
+  buildEngineAssembly() {
+    const group = new THREE.Group();
 
-    // 1. Piston Crown
-    const crownMat = this.getMaterial(0xa0aec0);
-    const crownGeo = new THREE.CylinderGeometry(9, 9, 12, 32);
-    const crownMesh = new THREE.Mesh(crownGeo, crownMat);
-    crownMesh.position.y = 10;
-    pistonGroup.add(crownMesh);
-    this.parts.push({ mesh: crownMesh, explodeDir: new THREE.Vector3(0, 1.5, 0) });
+    // Piston Crown
+    const pMat = this.getMaterial(0x94a3b8);
+    const pGeo = new THREE.CylinderGeometry(9, 9, 10, 32);
+    const pMesh = new THREE.Mesh(pGeo, pMat);
+    pMesh.position.y = 2;
+    group.add(pMesh);
+    this.parts.push({ mesh: pMesh, explodeDir: new THREE.Vector3(0, -1.5, 0) });
 
-    // Compression Rings (2 rings)
-    for (let r = 0; r < 2; r++) {
-      const ringGeo = new THREE.TorusGeometry(9.1, 0.25, 8, 32);
-      const ringMesh = new THREE.Mesh(ringGeo, this.getMaterial(0xff9d00));
-      ringMesh.rotation.x = Math.PI / 2;
-      ringMesh.position.y = 13 + r * 1.5;
-      pistonGroup.add(ringMesh);
-      this.parts.push({ mesh: ringMesh, explodeDir: new THREE.Vector3(0, 1.8 + r * 0.4, 0) });
-    }
-
-    // 2. Wrist Gudgeon Pin
+    // Wrist Pin
     const pinMat = this.getMaterial(0x00f0ff);
     const pinGeo = new THREE.CylinderGeometry(2, 2, 16, 24);
     const pinMesh = new THREE.Mesh(pinGeo, pinMat);
     pinMesh.rotation.z = Math.PI / 2;
-    pinMesh.position.y = 8;
-    pistonGroup.add(pinMesh);
+    pinMesh.position.y = 0;
+    group.add(pinMesh);
     this.parts.push({ mesh: pinMesh, explodeDir: new THREE.Vector3(1.8, 0, 0) });
 
-    // 3. Connecting Rod Shank
-    const rodMat = this.getMaterial(0x64748b);
-    const rodGeo = new THREE.BoxGeometry(3, 18, 2.5);
-    const rodMesh = new THREE.Mesh(rodGeo, rodMat);
-    rodMesh.position.y = -2;
-    pistonGroup.add(rodMesh);
-
-    // 4. Big End Bearing Cap & Fasteners
-    const capMat = this.getMaterial(0xd4af37);
-    const capGeo = new THREE.CylinderGeometry(4.5, 4.5, 3.5, 24, 1, false, 0, Math.PI);
-    const capMesh = new THREE.Mesh(capGeo, capMat);
-    capMesh.rotation.z = Math.PI / 2;
-    capMesh.position.y = -12;
-    pistonGroup.add(capMesh);
-    this.parts.push({ mesh: capMesh, explodeDir: new THREE.Vector3(0, -1.8, 0) });
-
-    this.modelGroup.add(pistonGroup);
-  }
-
-  buildTransmissionShaft() {
-    const shaftGroup = new THREE.Group();
-
-    // Stepped Cylinders
-    const steps = [
-      { r: 2.5, len: 8, pos: -12, color: 0x94a3b8 },
-      { r: 4.5, len: 10, pos: -3, color: 0x00f0ff },
-      { r: 6.0, len: 6, pos: 5, color: 0xd4af37 },
-      { r: 3.5, len: 12, pos: 14, color: 0xa0aec0 }
+    // 4 Valves (2 Intake Cyan, 2 Exhaust Red/Amber)
+    const valPositions = [
+      { x: -4, z: -4, col: 0x00f0ff, dir: new THREE.Vector3(-1, 1.8, -1) },
+      { x: 4, z: -4, col: 0x00f0ff, dir: new THREE.Vector3(1, 1.8, -1) },
+      { x: -4, z: 4, col: 0xff5500, dir: new THREE.Vector3(-1, 1.8, 1) },
+      { x: 4, z: 4, col: 0xff5500, dir: new THREE.Vector3(1, 1.8, 1) }
     ];
 
-    steps.forEach((step, idx) => {
-      const geo = new THREE.CylinderGeometry(step.r, step.r, step.len, 32);
-      const mesh = new THREE.Mesh(geo, this.getMaterial(step.color));
-      mesh.position.y = step.pos;
-      shaftGroup.add(mesh);
-      this.parts.push({ mesh, explodeDir: new THREE.Vector3(0, (idx - 1.5) * 0.8, 0) });
+    valPositions.forEach((vp) => {
+      const vStem = new THREE.CylinderGeometry(0.8, 0.8, 14, 16);
+      const vHead = new THREE.CylinderGeometry(2.8, 1.2, 1.5, 24);
+      const vMesh1 = new THREE.Mesh(vStem, this.getMaterial(vp.col));
+      const vMesh2 = new THREE.Mesh(vHead, this.getMaterial(vp.col));
+      vMesh1.position.set(vp.x, 15, vp.z);
+      vMesh2.position.set(vp.x, 8.5, vp.z);
+
+      const vGroup = new THREE.Group();
+      vGroup.add(vMesh1); vGroup.add(vMesh2);
+      group.add(vGroup);
+      this.parts.push({ mesh: vGroup, explodeDir: vp.dir });
     });
 
-    // Splines on step 1
-    for (let s = 0; s < 8; s++) {
-      const sa = (s * Math.PI * 2) / 8;
-      const sGeo = new THREE.BoxGeometry(0.8, 7, 0.8);
-      const sMesh = new THREE.Mesh(sGeo, this.getMaterial(0xff9d00));
-      sMesh.position.set(Math.cos(sa) * 2.6, -12, Math.sin(sa) * 2.6);
-      shaftGroup.add(sMesh);
+    // Spark Plug in center
+    const spMat = this.getMaterial(0xffd700);
+    const spGeo = new THREE.CylinderGeometry(1.2, 1.2, 18, 16);
+    const spMesh = new THREE.Mesh(spGeo, spMat);
+    spMesh.position.set(0, 16, 0);
+    group.add(spMesh);
+    this.parts.push({ mesh: spMesh, explodeDir: new THREE.Vector3(0, 2.5, 0) });
+
+    this.modelGroup.add(group);
+  }
+
+  // 3. HIGH-SPEED TURBINE IMPELLER & ROTOR
+  buildTurbineImpeller() {
+    const group = new THREE.Group();
+
+    // Central Rotor Hub
+    const hubMat = this.getMaterial(0x00f0ff);
+    const hubGeo = new THREE.CylinderGeometry(3.5, 8.5, 12, 36);
+    const hubMesh = new THREE.Mesh(hubGeo, hubMat);
+    group.add(hubMesh);
+    this.parts.push({ mesh: hubMesh, explodeDir: new THREE.Vector3(0, 0, 0) });
+
+    // 12 Curved Aerodynamic Impeller Blades
+    const bladeMat = this.getMaterial(0xa0aec0);
+    for (let b = 0; b < 12; b++) {
+      const ba = (b * Math.PI * 2) / 12;
+      const bGeo = new THREE.BoxGeometry(1.2, 10, 8);
+      const bMesh = new THREE.Mesh(bGeo, bladeMat);
+      bMesh.position.set(Math.cos(ba) * 7.5, 0, Math.sin(ba) * 7.5);
+      bMesh.rotation.y = -ba + 0.6;
+      bMesh.rotation.z = 0.25;
+      group.add(bMesh);
+      this.parts.push({ mesh: bMesh, explodeDir: new THREE.Vector3(Math.cos(ba) * 1.5, 0, Math.sin(ba) * 1.5) });
     }
 
-    this.modelGroup.add(shaftGroup);
+    // Nose Cone (Diffuser Fairing)
+    const noseMat = this.getMaterial(0xff9d00);
+    const noseGeo = new THREE.ConeGeometry(3.8, 8, 32);
+    const noseMesh = new THREE.Mesh(noseGeo, noseMat);
+    noseMesh.position.y = 10;
+    group.add(noseMesh);
+    this.parts.push({ mesh: noseMesh, explodeDir: new THREE.Vector3(0, 2.0, 0) });
+
+    this.modelGroup.add(group);
   }
 
   updateExplode(factor) {
@@ -291,7 +310,7 @@ class MechanicalCADViewer {
         if (!item.initialPos) {
           item.initialPos = item.mesh.position.clone();
         }
-        item.mesh.position.copy(item.initialPos).addScaledVector(item.explodeDir, factor * 8);
+        item.mesh.position.copy(item.initialPos).addScaledVector(item.explodeDir, factor * 9);
       }
     });
   }
@@ -299,12 +318,16 @@ class MechanicalCADViewer {
   bindControls() {
     const modelSelect = document.getElementById('cad-model-select');
     if (modelSelect) {
-      modelSelect.addEventListener('change', (e) => this.loadModel(e.target.value));
+      modelSelect.addEventListener('change', (e) => {
+        if (window.mechAudio) window.mechAudio.playMechanicalClick(1400);
+        this.loadModel(e.target.value);
+      });
     }
 
     const shadeSelect = document.getElementById('cad-shade-mode');
     if (shadeSelect) {
       shadeSelect.addEventListener('change', (e) => {
+        if (window.mechAudio) window.mechAudio.playMechanicalClick(1200);
         this.shadingMode = e.target.value;
         this.loadModel(this.currentModelType);
       });
@@ -313,6 +336,7 @@ class MechanicalCADViewer {
     const matSelect = document.getElementById('cad-material-preset');
     if (matSelect) {
       matSelect.addEventListener('change', (e) => {
+        if (window.mechAudio) window.mechAudio.playMechanicalClick(1600);
         this.materialPreset = e.target.value;
         this.loadModel(this.currentModelType);
       });
@@ -338,7 +362,8 @@ class MechanicalCADViewer {
     const resetCamBtn = document.getElementById('cad-reset-cam-btn');
     if (resetCamBtn) {
       resetCamBtn.addEventListener('click', () => {
-        this.camera.position.set(25, 20, 35);
+        if (window.mechAudio) window.mechAudio.playHydraulicWhoosh();
+        this.camera.position.set(30, 25, 40);
         if (this.controls) this.controls.target.set(0, 0, 0);
       });
     }
@@ -358,7 +383,6 @@ class MechanicalCADViewer {
 
 window.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('three-cad-canvas-container')) {
-    // Delay initialization slightly to guarantee Three.js and container dimensions
     setTimeout(() => {
       if (typeof THREE !== 'undefined') {
         window.mainCADViewer = new MechanicalCADViewer('three-cad-canvas-container');
