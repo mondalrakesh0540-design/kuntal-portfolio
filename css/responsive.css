@@ -1,5 +1,5 @@
 /* ==========================================================================
-   STRICT MOBILE ZERO-OVERFLOW & ALIGNMENT ENGINE (v3.5)
+   ADVANCED ZERO-OVERFLOW & 3-DOT MOBILE NAVIGATION ENGINE (v4.0)
    ========================================================================== */
 
 *, *::before, *::after {
@@ -25,7 +25,8 @@ html, body {
   box-sizing: border-box !important;
 }
 
-@media (max-width: 1024px) {
+/* TABLET & MOBILE BREAKPOINTS (<= 992px) */
+@media (max-width: 992px) {
   .hero-grid {
     grid-template-columns: 1fr !important;
     gap: 2rem !important;
@@ -38,8 +39,54 @@ html, body {
   .about-grid, .lab-panel, .internship-card, .contact-grid {
     grid-template-columns: 1fr !important;
   }
+
+  /* 3-DOT MOBILE NAVIGATION */
+  .nav-links {
+    display: none !important;
+    position: fixed !important;
+    top: 60px !important;
+    left: 0 !important;
+    width: 100% !important;
+    background: rgba(7, 13, 24, 0.98) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid var(--border-bright) !important;
+    flex-direction: column !important;
+    padding: 1.2rem 1.5rem !important;
+    gap: 0.8rem !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85) !important;
+    z-index: 1000 !important;
+  }
+
+  .nav-links.active {
+    display: flex !important;
+    animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .nav-link {
+    font-size: 1rem !important;
+    padding: 0.5rem 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    width: 100% !important;
+  }
+
+  .nav-toggle-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: var(--radius-md) !important;
+    background: var(--accent-cyan-dim) !important;
+    border: 1px solid var(--border-bright) !important;
+    color: var(--accent-cyan) !important;
+    font-size: 1.2rem !important;
+    cursor: pointer !important;
+    box-shadow: 0 0 10px var(--accent-cyan-dim) !important;
+  }
 }
 
+/* SMARTPHONE BREAKPOINTS (<= 768px) */
 @media (max-width: 768px) {
   .container {
     padding-left: 0.85rem !important;
@@ -63,11 +110,12 @@ html, body {
     height: 60px !important;
     padding-left: 0.75rem !important;
     padding-right: 0.75rem !important;
+    justify-content: space-between !important;
   }
 
   .nav-brand {
     gap: 0.4rem !important;
-    max-width: 60% !important;
+    max-width: 55% !important;
   }
 
   .nav-gear-icon {
@@ -88,22 +136,14 @@ html, body {
   }
 
   .nav-actions {
-    gap: 0.3rem !important;
+    gap: 0.4rem !important;
+    display: flex !important;
+    align-items: center !important;
   }
 
   .nav-actions .btn-sm {
-    padding: 0.3rem 0.55rem !important;
-    font-size: 0.7rem !important;
-  }
-
-  .nav-toggle-btn {
-    width: 34px !important;
-    height: 34px !important;
-  }
-
-  .nav-links {
-    top: 60px !important;
-    padding: 1rem 1.2rem !important;
+    padding: 0.35rem 0.6rem !important;
+    font-size: 0.72rem !important;
   }
 
   /* Hero Section */
